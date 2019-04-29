@@ -1,0 +1,21 @@
+{
+  "generator-ngx-rocket": {
+    "version": "6.0.1",
+    "props": {
+      "location": "path",
+      "appName": "angular-graphic-editor",
+      "target": ["web"],
+      "pwa": true,
+      "ui": "bootstrap",
+      "auth": true,
+      "lazy": true,
+      "angulartics": false,
+      "tools": ["prettier", "hads"],
+      "utility": [],
+      "projectName": "angular-graphic-editor",
+      "packageManager": "npm",
+      "mobile": [],
+      "desktop": []
+    }
+  }
+}

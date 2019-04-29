@@ -1,0 +1,137 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="row">
+        <div class="col-xl-12 text-right">
+          <button
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Export to image"
+            type="button"
+            class="btn btn-primary"
+            (click)="rasterize()"
+          >
+            <i class="fa fa-download" aria-hidden="true"></i> Export to image
+          </button>
+          <button
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Export to SVG"
+            type="button"
+            class="btn btn-primary"
+            (click)="rasterizeSVG()"
+          >
+            <i class="fa fa-download" aria-hidden="true"></i> Export to SVG
+          </button>
+          <button
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Save in localStorage"
+            type="button"
+            class="btn btn-primary"
+            (click)="saveCanvasToJSON()"
+          >
+            <i class="fa fa-save" aria-hidden="true"></i> Save local
+          </button>
+          <button
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Load from localStorage"
+            type="button"
+            class="btn btn-primary"
+            (click)="loadCanvasFromJSON()"
+          >
+            <i class="fa fa-save" aria-hidden="true"></i> Load local
+          </button>
+          <button
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Clean Canvas"
+            type="button"
+            class="btn btn-danger"
+            (click)="confirmClear()"
+          >
+            <i class="fa fa-ban" aria-hidden="true"></i> Clean
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col-xl-3">
+      <!-- 
+          <div class="card">
+              <div class="card-header">Upload image</div>
+              <div class="card-body text-center">
+                  <img id="testImage" *ngIf="url" class="images-item-upload" [src]="url" (click)="addImageOnCanvas(url);">
+                  <input type="file" (change)="readUrl($event);">
+                  <br/>
+                  <br/>
+                  <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                      <div class="btn-group" role="group">
+                          <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeWhite(url);">
+                              <i class="fa fa-times" aria-hidden="true"></i> Remove</button>
+                      </div>
+                  </div>
+              </div>
+          </div> -->
+
+      <div class="card">
+        <div class="card-header">Add figure</div>
+        <div class="card-body text-center max-height">
+          <div class="btn-group btn-group-vertical" role="group" aria-label="...">
+            <button type="button" class="btn btn-primary" (click)="addFigure('rectangle')">Rectangle</button>
+            <button type="button" class="btn btn-primary" (click)="addFigure('square')">Square</button>
+            <button type="button" class="btn btn-primary" (click)="addFigure('triangle')">Triangle</button>
+            <button type="button" class="btn btn-primary" (click)="addFigure('circle')">Circle</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-6">
+      <canvas id="canvas"></canvas>
+    </div>
+    <div class="col-xl-3">
+      <div class="card">
+        <div class="card-header">Options</div>
+        <div class="card-body text-center">
+          <div class="btn-group" role="group" aria-label="...">
+            <button
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Delete element"
+              type="button"
+              class="btn btn-outline-danger"
+              [disabled]="!selected"
+              (click)="removeSelected()"
+            >
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+            <!-- <button data-toggle="tooltip" data-placement="bottom" title="Unselect" type="button" class="btn btn-outline-primary" [disabled]="!selected"
+                          (click)="cleanSelect()">
+                          <i class="fa fa-remove" aria-hidden="true"></i>
+                      </button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-12">
+      <br />
+      <div class="card">
+        <div class="card-header">
+          <button type="button" class="btn btn-primary btn-sm" (click)="rasterizeJSON()">
+            <i class="fa fa-refresh" aria-hidden="true"></i> Render to json
+          </button>
+        </div>
+        <div class="card-body">
+          <pre>{{ json }}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br />
+  <br />
+</div>
