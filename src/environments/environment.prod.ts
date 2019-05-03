@@ -11,5 +11,13 @@ export const environment = {
   version: env.npm_package_version,
   serverUrl: 'https://api.chucknorris.io',
   defaultLanguage: 'en-US',
-  supportedLanguages: ['en-US', 'fr-FR']
+  supportedLanguages: ['en-US', 'fr-FR'],
+  firebase: {
+    apiKey: 'AIzaSyBMNblbSynPnUM-AGL7bcJ-EbjgTZsc798',
+    authDomain: 'angular-graphic-drawer.firebaseapp.com',
+    databaseURL: 'https://angular-graphic-drawer.firebaseio.com',
+    projectId: 'angular-graphic-drawer',
+    storageBucket: 'angular-graphic-drawer.appspot.com',
+    messagingSenderId: '545035993604'
+  }
 };

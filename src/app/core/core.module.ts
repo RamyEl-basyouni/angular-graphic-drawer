@@ -13,9 +13,19 @@ import { HttpCacheService } from './http/http-cache.service';
 import { ApiPrefixInterceptor } from './http/api-prefix.interceptor';
 import { ErrorHandlerInterceptor } from './http/error-handler.interceptor';
 import { CacheInterceptor } from './http/cache.interceptor';
-
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/firestore';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { environment } from '@env/environment';
 @NgModule({
-  imports: [CommonModule, HttpClientModule, TranslateModule, RouterModule],
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    TranslateModule,
+    RouterModule,
+    AngularFireModule.initializeApp(environment.firebase), // imports firebase/app needed for everything
+    AngularFirestoreModule // imports firebase/firestore, only needed for database features,
+  ],
   providers: [
     AuthenticationService,
     CredentialsService,
@@ -25,10 +35,12 @@ import { CacheInterceptor } from './http/cache.interceptor';
     ApiPrefixInterceptor,
     ErrorHandlerInterceptor,
     CacheInterceptor,
+
     {
       provide: HttpClient,
       useClass: HttpService
     },
+    { provide: FirestoreSettingsToken, useValue: {} },
     {
       provide: RouteReuseStrategy,
       useClass: RouteReusableStrategy

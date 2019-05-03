@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import 'fabric';
 declare const fabric: any;
@@ -39,8 +42,12 @@ export class HomeComponent implements OnInit {
   private imageEditor: boolean = false;
   private figureEditor: boolean = false;
   public selected: any;
+  private itemsCollection: AngularFirestoreCollection<any>;
+  items: Observable<any[]>;
 
-  constructor() {}
+  constructor(private afs: AngularFirestore) {
+    this.itemsCollection = afs.collection<any>('shapes');
+  }
 
   ngOnInit() {
     //setup front side canvas
@@ -48,6 +55,11 @@ export class HomeComponent implements OnInit {
       hoverCursor: 'pointer',
       selection: true,
       selectionBorderColor: 'blue'
+    });
+
+    this.itemsCollection.valueChanges().subscribe(res => {
+      console.log('firebase canvas' + res[0]);
+      this.loadCanvasFromJSON(res[0].data);
     });
 
     this.canvas.on({
@@ -59,9 +71,7 @@ export class HomeComponent implements OnInit {
         selectedObject.hasRotatingPoint = true;
         selectedObject.transparentCorners = false;
         // selectedObject.cornerColor = 'rgba(255, 87, 34, 0.7)';
-
         this.resetPanels();
-
         if (selectedObject.type !== 'group' && selectedObject) {
           this.getId();
           this.getOpacity();
@@ -75,14 +85,7 @@ export class HomeComponent implements OnInit {
               break;
             case 'i-text':
               this.textEditor = true;
-              // this.getLineHeight();
-              // this.getCharSpacing();
-              // this.getBold();
-              // this.getFontStyle();
-              // this.getFill();
-              // this.getTextDecoration();
-              // this.getTextAlign();
-              // this.getFontFamily();
+
               break;
             case 'image':
               console.log('image');
@@ -98,62 +101,11 @@ export class HomeComponent implements OnInit {
 
     this.canvas.setWidth(this.size.width);
     this.canvas.setHeight(this.size.height);
-
-    // get references to the html canvas element & its context
-    // this.canvas.on('mouse:down', (e) => {
-    // let canvasElement: any = document.getElementById('canvas');
-    // console.log(canvasElement)
-    // });
   }
 
-  /*------------------------Block elements------------------------*/
-
-  //Block "Size"
-  changeSize(event: any) {
-    this.canvas.setWidth(this.size.width);
-    this.canvas.setHeight(this.size.height);
-  }
-
-  //Block "Add text"
-  addText() {
-    let textString = this.textString;
-    let text = new fabric.IText(textString, {
-      left: 10,
-      top: 10,
-      fontFamily: 'helvetica',
-      angle: 0,
-      fill: '#000000',
-      scaleX: 0.5,
-      scaleY: 0.5,
-      fontWeight: '',
-      hasRotatingPoint: true
-    });
-    this.extend(text, this.randomId());
-    this.canvas.add(text);
-    this.selectItemAfterAdded(text);
-    this.textString = '';
-  }
-
-  //Block "Add images"
-
-  getImgPolaroid(event: any) {
-    let el = event.target;
-    fabric.Image.fromURL(el.src, (image: any) => {
-      image.set({
-        left: 10,
-        top: 10,
-        angle: 0,
-        padding: 10,
-        cornersize: 10,
-        hasRotatingPoint: true,
-        peloas: 12
-      });
-      image.setWidth(150);
-      image.setHeight(150);
-      this.extend(image, this.randomId());
-      this.canvas.add(image);
-      this.selectItemAfterAdded(image);
-    });
+  addPolygon(polygon: any) {
+    const data = JSON.parse(JSON.stringify(polygon));
+    this.itemsCollection.add({ data });
   }
 
   //Block "Upload Image"
@@ -321,37 +273,6 @@ export class HomeComponent implements OnInit {
     this.canvas.renderAll();
   }
 
-  clone() {
-    let activeObject = this.canvas.getActiveObject();
-    // activeGroup = this.canvas.getActiveGroup();
-
-    if (activeObject) {
-      let clone;
-      switch (activeObject.type) {
-        case 'rect':
-          clone = new fabric.Rect(activeObject.toObject());
-          break;
-        case 'circle':
-          clone = new fabric.Circle(activeObject.toObject());
-          break;
-        case 'triangle':
-          clone = new fabric.Triangle(activeObject.toObject());
-          break;
-        case 'i-text':
-          clone = new fabric.IText('', activeObject.toObject());
-          break;
-        case 'image':
-          clone = fabric.util.object.clone(activeObject);
-          break;
-      }
-      if (clone) {
-        clone.set({ left: 10, top: 10 });
-        this.canvas.add(clone);
-        this.selectItemAfterAdded(clone);
-      }
-    }
-  }
-
   getId() {
     this.props.id = this.canvas.getActiveObject().toObject().id;
   }
@@ -399,50 +320,34 @@ export class HomeComponent implements OnInit {
     if (!fabric.Canvas.supports('toDataURL')) {
       alert("This browser doesn't provide means to serialize canvas to an image");
     } else {
-      console.log(this.canvas.toDataURL('png'));
-      //window.open(this.canvas.toDataURL('png'));
       var image = new Image();
-      image.src = this.canvas.toDataURL('png');
       var w = window.open('');
       w.document.write(image.outerHTML);
     }
   }
 
   rasterizeSVG() {
-    console.log(this.canvas.toSVG());
-    // window.open(
-    //   'data:image/svg+xml;utf8,' +
-    //   encodeURIComponent(this.canvas.toSVG()));
-    // console.log(this.canvas.toSVG())
-    // var image = new Image();
-    // image.src = this.canvas.toSVG()
     var w = window.open('');
     w.document.write(this.canvas.toSVG());
   }
 
   saveCanvasToJSON() {
     let json = JSON.stringify(this.canvas);
+    this.addPolygon(json);
     localStorage.setItem('Kanvas', json);
-    console.log('json');
-    console.log(json);
   }
 
-  loadCanvasFromJSON() {
-    let CANVAS = localStorage.getItem('Kanvas');
-    console.log('CANVAS');
-    console.log(CANVAS);
-
-    // and load everything from the same json
-    this.canvas.loadFromJSON(CANVAS, () => {
-      console.log('CANVAS untar');
-      console.log(CANVAS);
-
-      // making sure to render canvas at the end
+  loadFromLocalStorage() {
+    let canvas = localStorage.getItem('Kanvas');
+    console.log('local storage canvas' + canvas);
+    this.canvas.loadFromJSON(canvas, () => {
       this.canvas.renderAll();
+    });
+  }
 
-      // and checking if object's "name" is preserved
-      console.log('this.canvas.item(0).name');
-      console.log(this.canvas);
+  loadCanvasFromJSON(items) {
+    this.canvas.loadFromJSON(items, () => {
+      this.canvas.renderAll();
     });
   }
 
