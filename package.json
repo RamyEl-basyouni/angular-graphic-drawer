@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "ng": "ng",
-    "build": "npm run env -s && ng build --prod",
+    "build": "ng build --prod",
     "heroku-prebuild": "npm install -g @angular/cli @angular/compiler-cli typescript @angular-devkit/build-angular @ngx-rocket/scripts && npm i https-proxy-agent",
     "start": "npm run env -s && ng serve --aot --proxy-config proxy.conf.js",
     "serve:sw": "npm run build -s && npx http-server ./dist -p 4200",
