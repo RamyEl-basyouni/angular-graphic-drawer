@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "build": "npm run env -s && ng build --prod",
-    "heroku-prebuild": "npm install -g @angular/cli && npm install -g @ngx-rocket/scripts",
+    "heroku-prebuild": "npm install -g @angular/cli @angular/compiler-cli typescript @ngx-rocket/scripts",
     "start": "npm run env -s && ng serve --aot --proxy-config proxy.conf.js",
     "serve:sw": "npm run build -s && npx http-server ./dist -p 4200",
     "lint": "ng lint && stylelint \"src/**/*.scss\" --syntax scss && htmlhint \"src\" --config .htmlhintrc",
